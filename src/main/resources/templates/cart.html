@@ -1,0 +1,143 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Cart</title>
+
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/static/css/bootstrap.min.css}" rel="stylesheet">
+
+    <!--     Main CSS -->
+    <link th:href="@{/static/css/main.css}" rel="stylesheet">
+
+    <!-- Angular JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.1/angular.min.js"></script>
+
+    <!-- Carousel CSS -->
+    <link th:href="@{/static/css/carousel.css}" rel="stylesheet">
+
+
+</head>
+<!-- NAVBAR
+================================================== -->
+<body>
+<div class="navbar-wrapper">
+    <div class="container">
+
+        <nav class="navbar navbar-inverse navbar-static-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                            aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">Music Store</a>
+                </div>
+                <div id="navbar" class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li><a th:href="@{/}">Home</a></li>
+                        <li><a th:href="@{/productList}">Products</a></li>
+                        <li><a th:href="@{/about}">About</a></li>
+                    </ul>
+
+                    <ul class="nav navbar-nav pull-right" sec:authorize='isAuthenticated()'>
+                        <li sec:authorize="!hasAuthority('ADMIN')">
+                            <a th:href="@{/customer}">Welcome :
+                                <span sec:authentication="principal.username"></span></a></li>
+                        <li sec:authorize="hasAuthority('ADMIN')">
+                            <a th:href="@{/}">Welcome : <span sec:authentication="principal.username"></span> </a>
+                        </li>                        <li sec:authorize="!hasAuthority('ADMIN')"><a th:href="@{/customer/cart}">Cart</a>
+                        </li>
+                        <li sec:authorize="hasAuthority('ADMIN')"><a th:href="@{/admin}"> Admin</a>
+                        </li>
+                        <li>
+                            <form th:action="@{/logout}" method="POST">
+                                <input type="submit" value="Logout" style="margin-top:13px"/>
+                            </form>
+                        </li>
+                    </ul>
+                    <ul class="nav navbar-nav pull-right" sec:authorize="!isAuthenticated()">
+                        <li><a th:href="@{/login}">Login</a></li>
+                        <li><a th:href="@{/register}">Register</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+    </div>
+</div>
+
+<div class="container-wrapper">
+    <div class="container">
+        <section>
+            <div class="jumbotron">
+                <div class="container">
+                    <h1>Cart</h1>
+
+                    <p>All the selected products in your shopping cart</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="container" ng-app="cartApp">
+            <div ng-controller="cartCtrl" th:attr="ng-init='initCartId(\''+${cartId}+'\');'">
+                <div>
+                    <a class="btn btn-danger pull-left" ng-click="clearCart()"><span
+                            class="glyphicon glyphicon-remove-sign"></span>Clear Cart</a>
+                    <a th:href="@{/order/{cartUuid}(cartUuid=${cartId})}"
+                       class="btn btn-primary pull-right">
+                        <span class="glyphicon-shopping-cart glyphicon"></span>Check out</a>
+                </div>
+
+                <table class="table table-hover">
+                    <tr>
+                        <th>Product</th>
+                        <th>Unit Price</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Action</th>
+                    </tr>
+                    <tr ng-repeat="item in cart.cartItems">
+                        <td>{{item.product.productName}}</td>
+                        <td>{{item.product.productPrice}}</td>
+                        <td>{{item.quantity}}</td>
+                        <td>{{item.totalPrice}}</td>
+                        <td><a href="" class="label label-danger" ng-click="removeFromCart(item.product.uuid)">
+                            <span class="glyphicon glyphicon-remove"></span>remove</a></td>
+                    </tr>
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th>Grand Total</th>
+                        <th>{{calGrandTotal()}}</th>
+                        <th></th>
+                    </tr>
+                </table>
+
+                <a th:href="@{/productList}" class="btn btn-default">Continue Shopping</a>
+            </div>
+        </section>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.1/angular.min.js"></script>
+        <script th:src="@{/static/js/controller.js}"></script>
+        <!-- FOOTER -->
+        <footer>
+            <p>&copy; 2020 Company, Inc.
+        </footer>
+    </div>
+</div><!-- /.container -->
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script th:src="@{../static/js/bootstrap.min.js}"></script>
+
+</body>
+</html>

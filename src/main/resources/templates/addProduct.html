@@ -1,0 +1,172 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Adding Product</title>
+
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/static/css/bootstrap.min.css}" rel="stylesheet">
+
+    <!--     Main CSS -->
+    <link th:href="@{/static/css/main.css}" rel="stylesheet">
+
+    <!-- Angular JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.1/angular.min.js"></script>
+
+    <!-- Carousel CSS -->
+    <link th:href="@{/static/css/carousel.css}" rel="stylesheet">
+
+
+</head>
+<!-- NAVBAR
+================================================== -->
+<body>
+<div class="navbar-wrapper">
+    <div class="container">
+
+        <nav class="navbar navbar-inverse navbar-static-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                            aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">Music Store</a>
+                </div>
+                <div id="navbar" class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li><a th:href="@{/}">Home</a></li>
+                        <li><a th:href="@{/productList}">Products</a></li>
+                        <li><a th:href="@{/about}">About</a></li>
+                    </ul>
+
+                    <ul class="nav navbar-nav pull-right" sec:authorize='isAuthenticated()'>
+                        <li sec:authorize="!hasAuthority('ADMIN')">
+                            <a th:href="@{/customer}">Welcome :
+                                <span sec:authentication="principal.username"></span></a></li>
+                        <li sec:authorize="hasAuthority('ADMIN')">
+                            <a th:href="@{/}">Welcome : <span sec:authentication="principal.username"></span> </a>
+                        </li>
+                        <li sec:authorize="!hasAuthority('ADMIN')"><a th:href="@{/customer/cart}">Cart</a>
+                        </li>
+                        <li sec:authorize="hasAuthority('ADMIN')"><a th:href="@{/admin}"> Admin</a>
+                        </li>
+                        <li>
+                            <form th:action="@{/logout}" method="POST">
+                                <input type="submit" value="Logout" style="margin-top:13px"/>
+                            </form>
+                        </li>
+                    </ul>
+                    <ul class="nav navbar-nav pull-right" sec:authorize="!isAuthenticated()">
+                        <li><a th:href="@{/login}">Login</a></li>
+                        <li><a th:href="@{/register}">Register</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+    </div>
+</div>
+
+<div class="container-wrapper">
+    <div class="container">
+        <div class="page-header">
+            <h1>Add Product</h1>
+
+            <p class="lead">Fill the below information to add a product:</p>
+        </div>
+
+        <form th:action="@{/admin/productInventory/addProduct}" th:object="${product}" enctype="multipart/form-data"
+              method="post">
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" th:field="*{productName}" id="name" class="form-Control" required/>
+            </div>
+
+            <div class="form-group">
+                <label for="category">Category</label>
+                <label class="checkbox-inline">
+                    <input type="radio" th:field="*{productCategory}" id="category"
+                           value="instrument"/>
+                    Instrument</label>
+                <label class="checkbox-inline">
+                    <input type="radio" th:field="*{productCategory}" id="category"
+                           value="record"/>
+                    Record</label>
+                <label class="checkbox-inline">
+                    <input type="radio" th:field="*{productCategory}" id="category"
+                           value="accessory"/>
+                    Accessory</label>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description</label>
+                <input type="text" th:field="*{productDescription}" id="description" class="form-Control"/>
+            </div>
+
+            <div class="form-group">
+                <label for="price">Price</label>
+                <input type="text" th:field="*{productPrice}" id="price" class="form-Control" required/>
+            </div>
+
+            <div class="form-group">
+                <label for="condition">Condition</label>
+                <label class="checkbox-inline">
+                    <input type="radio" th:field="*{productCondition}" id="condition"
+                           value="new"/>New</label>
+                <label class="checkbox-inline">
+                    <input type="radio" th:field="*{productCondition}" id="condition"
+                           value="used"/>Used</label>
+            </div>
+
+            <div class="form-group">
+                <label for="status">Status</label>
+                <label class="checkbox-inline">
+                    <input type="radio" th:field="*{productStatus}" id="status"
+                           value="active"/>Active</label>
+                <label class="checkbox-inline">
+                    <input type="radio" th:field="*{productStatus}" id="status"
+                           value="inactive"/>Inactive</label>
+            </div>
+
+            <div class="form-group">
+                <label for="unitInStock">Unit In Stock</label>
+                <input type="text" th:field="*{unitInStock}" id="unitInStock" class="form-Control" required/>
+            </div>
+
+            <div class="form-group">
+                <label for="manufacturer">Manufacturer</label>
+                <input type="text" th:field="*{productManufactures}" id="manufacturer" class="form-Control"/>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label" for="productImage">Upload Picture</label>
+                <input type="file" id="productImage" th:field="*{productImage}" class="form:input-large"/>
+            </div>
+
+            <br><br>
+            <input type="submit" value="Submit" class="btn btn-default">
+            <a th:href="@{/admin/productInventory}" class="btn btn-default">Cancel</a>
+        </form>
+        <!-- FOOTER -->
+        <footer>
+            <p>&copy; 2020 Company, Inc.
+        </footer>
+    </div>
+
+</div><!-- /.container -->
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script th:src="@{../static/js/bootstrap.min.js}"></script>
+
+</body>
+</html>

@@ -1,0 +1,138 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Customer information</title>
+
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/static/css/bootstrap.min.css}" rel="stylesheet">
+
+    <!--     Main CSS -->
+    <link th:href="@{/static/css/main.css}" rel="stylesheet">
+
+    <!-- Angular JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.1/angular.min.js"></script>
+
+    <!-- Carousel CSS -->
+    <link th:href="@{/static/css/carousel.css}" rel="stylesheet">
+
+
+</head>
+<!-- NAVBAR
+================================================== -->
+<body>
+<div class="navbar-wrapper">
+    <div class="container">
+
+        <nav class="navbar navbar-inverse navbar-static-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                            aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">Music Store</a>
+                </div>
+                <div id="navbar" class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li><a th:href="@{/}">Home</a></li>
+                        <li><a th:href="@{/productList}">Products</a></li>
+                        <li><a th:href="@{/about}">About</a></li>
+                    </ul>
+
+                    <ul class="nav navbar-nav pull-right" sec:authorize='isAuthenticated()'>
+                        <li sec:authorize="!hasAuthority('ADMIN')">
+                            <a th:href="@{/customer}">Welcome :
+                                <span sec:authentication="principal.username"></span></a></li>
+                        <li sec:authorize="hasAuthority('ADMIN')">
+                            <a th:href="@{/}">Welcome : <span sec:authentication="principal.username"></span> </a>
+                        </li>
+                        <li sec:authorize="!hasAuthority('ADMIN')"><a th:href="@{/customer/cart}">Cart</a>
+                        </li>
+                        <li sec:authorize="hasAuthority('ADMIN')"><a th:href="@{/admin}"> Admin</a>
+                        </li>
+                        <li>
+                            <form th:action="@{/logout}" method="POST">
+                                <input type="submit" value="Logout" style="margin-top:13px"/>
+                            </form>
+                        </li>
+                    </ul>
+                    <ul class="nav navbar-nav pull-right" sec:authorize="!isAuthenticated()">
+                        <li><a th:href="@{/login}">Login</a></li>
+                        <li><a th:href="@{/register}">Register</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+    </div>
+</div>
+
+<div class="container-wrapper">
+    <div class="container">
+        <div class="page-header">
+            <h1>Customer Management Page</h1>
+
+            <p class="lead">This is the customer management page.</p>
+        </div>
+
+        <table class="table table-striped table-hover">
+            <thead>
+            <tr class="bg-success">
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Username</th>
+                <th>Enabled</th>
+                <th>City</th>
+                <th>Street</th>
+                <th></th>
+
+            </tr>
+            </thead>
+            <tr th:each="customer:${customers}">
+                <td th:text="${customer.customerName}">customerName</td>
+                <td th:text="${customer.customerEmail}">customerEmail</td>
+                <td th:text="${customer.customerPhone}">customerPhone</td>
+                <td th:text="${customer.customerUsername}">username</td>
+                <td th:text="${customer.enabled}">enabled</td>
+                <td th:text="${customer.address.city}">city</td>
+                <td th:text="${customer.address.streetName}">street</td>
+                <td>
+
+                    <a th:href="@{/admin/customers/edit/{uuid}(uuid=${customer.uuid})}">
+                        <span class="glyphicon glyphicon-edit">&nbsp;</span>
+                    </a>
+
+                    <a th:href="@{/admin/customers/delete/{customerUuid}(customerUuid=${customer.uuid})}"
+                       onclick="if (!(confirm('Are you sure you want to delete this customer?'))) return false">
+                        <span class="glyphicon glyphicon-remove-sign">&nbsp;</span>
+                    </a>
+
+                </td>
+
+            </tr>
+        </table>
+
+        <!-- FOOTER -->
+        <footer>
+            <p>&copy; 2020 Company, Inc.
+        </footer>
+    </div>
+
+</div><!-- /.container -->
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script th:src="@{../static/js/bootstrap.min.js}"></script>
+
+</body>
+</html>
